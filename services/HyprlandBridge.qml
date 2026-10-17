@@ -1,4 +1,3 @@
-import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
@@ -48,7 +47,7 @@ Scope {
   // The size Hyprland last reported for a window, as [width, height], or null.
   // It comes from Quickshell's cache: call refreshWindows() to keep it fresh.
   function windowSize(address) {
-    const toplevel = Hyprland.toplevels.values.find(t => EdgeGeometry.bareAddress(t.address) === address)
+    const toplevel = Hyprland.toplevels.values.find(candidate => EdgeGeometry.bareAddress(candidate.address) === address)
     return toplevel?.lastIpcObject?.size ?? null
   }
 

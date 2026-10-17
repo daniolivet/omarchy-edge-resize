@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import qs.Commons
 import "../lib/EdgeGeometry.js" as EdgeGeometry
 
 // The draggable handle over one edge from EdgeGeometry.findEdges.
@@ -36,7 +35,7 @@ PanelWindow {
   // Position along the edge, following the cursor and kept inside the edge.
   property real crossPos: edge.crossCenter
   readonly property real crossCenter: {
-    const halfPill = Style.space(40)
+    const halfPill = pill.length / 2
     const lowest = edge.crossCenter - edge.length / 2 + halfPill
     const highest = edge.crossCenter + edge.length / 2 - halfPill
     return Math.max(lowest, Math.min(highest, crossPos))
@@ -116,6 +115,7 @@ PanelWindow {
   }
 
   HandlePill {
+    id: pill
     vertical: handle.vertical
     hovered: dragArea.containsMouse
     pressed: dragArea.pressed

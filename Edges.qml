@@ -23,10 +23,6 @@ Item {
   // Never leave a released handle hanging if the layout read fails.
   readonly property int settleTimeoutMs: 800
 
-  function refresh() {
-    bridge.readLayout()
-  }
-
   function beginDrag() {
     dragging = true
     bridge.disableDragOptions()
@@ -55,15 +51,15 @@ Item {
     running: true
     repeat: true
     triggeredOnStart: true
-    onTriggered: root.refresh()
+    onTriggered: bridge.readLayout()
   }
 
   Connections {
     target: Hyprland
     function onRawEvent(event) { eventDebounce.restart() }
   }
-  Timer { id: eventDebounce; interval: root.eventDebounceMs; onTriggered: root.refresh() }
-  Timer { id: postDragRefresh; interval: root.postDragRefreshMs; onTriggered: root.refresh() }
+  Timer { id: eventDebounce; interval: root.eventDebounceMs; onTriggered: bridge.readLayout() }
+  Timer { id: postDragRefresh; interval: root.postDragRefreshMs; onTriggered: bridge.readLayout() }
   Timer { id: settleTimeout; interval: root.settleTimeoutMs; onTriggered: root.settlingHandle = null }
 
   Variants {

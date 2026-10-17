@@ -7,7 +7,7 @@ name=${1:?uso: $0 <nombre> [workspace]}
 workspace=${2:-$(hyprctl -j activeworkspace | node -e 'console.log(JSON.parse(require("fs").readFileSync(0)).id)')}
 out="$(dirname -- "${BASH_SOURCE[0]}")/fixtures/$name.json"
 
-# Solo los campos que lee computeEdges: sin títulos ni clases de ventana.
+# Solo los campos que lee findEdges: sin títulos ni clases de ventana.
 node -e '
   const [clients, workspaceId] = process.argv.slice(1).map(JSON.parse)
   const keep = (c) => ({

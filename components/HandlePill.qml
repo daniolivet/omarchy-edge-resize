@@ -10,8 +10,10 @@ Rectangle {
   required property real crossCenter
 
   readonly property bool active: hovered || pressed
-  width: vertical ? Style.space(pressed ? 8 : 6) : Style.space(80)
-  height: vertical ? Style.space(80) : Style.space(pressed ? 8 : 6)
+  readonly property real length: Style.space(80)   // along the edge
+  readonly property real thickness: Style.space(pressed ? 8 : 6)
+  width: vertical ? thickness : length
+  height: vertical ? length : thickness
   radius: Math.min(width, height) / 2
   color: Color.accent
   opacity: active ? 0.95 : 0
