@@ -10,7 +10,7 @@ import "lib/EdgeGeometry.js" as EdgeGeometry
 Item {
   id: root
 
-  // Built by EdgeGeometry.computeEdges; see there for the shape of each edge.
+  // Built by EdgeGeometry.findEdges; see there for the shape of each edge.
   property var edges: []
   property bool dragging: false
   property var settlingWin: null   // the handle that was just released, until the new layout arrives
@@ -47,8 +47,8 @@ Item {
     onLayoutRead: (clients, workspaceId) => {
       // Don't rebuild the handles while one is being dragged.
       if (root.dragging) return
-      const next = EdgeGeometry.computeEdges(clients, workspaceId)
-      if (JSON.stringify(next) !== JSON.stringify(root.edges)) root.edges = next
+      const next = EdgeGeometry.findEdges(clients, workspaceId)
+      if (!EdgeGeometry.edgesEqual(next, root.edges)) root.edges = next
       root.settlingWin = null
     }
   }

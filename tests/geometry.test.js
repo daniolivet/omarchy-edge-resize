@@ -28,7 +28,7 @@ assert.ok(layouts.length > 0, "no fixtures found")
 
 for (const name of layouts) {
   const { clients, workspaceId } = JSON.parse(fs.readFileSync(path.join(fixturesDir, `${name}.json`), "utf8"))
-  const edges = sorted(context.computeEdges(clients, workspaceId))
+  const edges = sorted(context.findEdges(clients, workspaceId))
   const snapshotPath = path.join(fixturesDir, `${name}.edges.json`)
 
   if (updateSnapshots) {
@@ -42,5 +42,10 @@ for (const name of layouts) {
   assert.deepStrictEqual(edges, expected, `edges changed for ${name}`)
   console.log(`ok: ${name} (${edges.length} edges)`)
 }
+
+const twoSideBySide = JSON.parse(fs.readFileSync(path.join(fixturesDir, "two-side-by-side.json"), "utf8"))
+const edges = context.findEdges(twoSideBySide.clients, twoSideBySide.workspaceId)
+assert.ok(context.edgesEqual(edges, context.findEdges(twoSideBySide.clients, twoSideBySide.workspaceId)))
+assert.ok(!context.edgesEqual(edges, []))
 
 console.log("EdgeGeometry tests passed")
