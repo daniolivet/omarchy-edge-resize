@@ -1,10 +1,10 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.Commons
 import "components"
+import "services"
 import "lib/EdgeGeometry.js" as EdgeGeometry
 
 Item {
@@ -12,74 +12,49 @@ Item {
 
   // Built by EdgeGeometry.computeEdges; see there for the shape of each edge.
   property var edges: []
-
-  readonly property real minShare: 0.25   // smallest share either window can get
-
-  function refresh() {
-    if (!poll.running) poll.running = true
-  }
-
-  Process {
-    id: poll
-    command: ["sh", "-c", "echo \"{\\\"c\\\":$(hyprctl -j clients),\\\"w\\\":$(hyprctl -j activeworkspace)}\""]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        try {
-          var d = JSON.parse(text)
-          // Don't rebuild the handles while one is being dragged.
-          if (root.dragging) return
-          var next = EdgeGeometry.computeEdges(d.c, d.w.id)
-          if (JSON.stringify(next) !== JSON.stringify(root.edges)) root.edges = next
-          root.settlingWin = null
-        } catch (e) {}
-      }
-    }
-  }
-
   property bool dragging: false
   property var settlingWin: null   // the handle that was just released, until the new layout arrives
-  property bool animationsWere: true
-  property bool smartResizingWas: true
+
+  readonly property real minShare: 0.25   // smallest share either window can get
   readonly property int grab: 5   // extra px on each side of the gap that also grab
 
-  // While dragging: animations off so the resize doesn't trail the cursor, and
-  // dwindle smart_resizing off so Hyprland always moves window A's right/bottom
-  // edge (smart resizing picks the edge from the cursor and can move the wrong
-  // side of a middle window).
+  // How often the layout is read again: as a fallback, after Hyprland events
+  // (debounced), and once the windows have settled after a drag.
+  readonly property int pollIntervalMs: 1000
+  readonly property int eventDebounceMs: 60
+  readonly property int postDragRefreshMs: 150
+  // Never leave a released handle hanging if the layout read fails.
+  readonly property int settleTimeoutMs: 800
+
+  function refresh() {
+    bridge.readLayout()
+  }
+
   function beginDrag() {
     dragging = true
-    animProbe.running = true
+    bridge.disableDragOptions()
   }
   function endDrag(w) {
     dragging = false
     settlingWin = w
-    settleGuard.restart()
-    Quickshell.execDetached(["hyprctl", "eval", "hl.config({ animations = { enabled = " + animationsWere
-      + " }, dwindle = { smart_resizing = " + smartResizingWas + " } })"])
-    settle.restart()
+    settleTimeout.restart()
+    bridge.restoreDragOptions()
+    postDragRefresh.restart()
   }
 
-  Process {
-    id: animProbe
-    command: ["sh", "-c", "echo \"[$(hyprctl -j getoption animations:enabled),$(hyprctl -j getoption dwindle:smart_resizing)]\""]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        try {
-          var o = JSON.parse(text)
-          root.animationsWere = o[0].int === 1
-          root.smartResizingWas = o[1].int === 1
-        } catch (e) {
-          root.animationsWere = true
-          root.smartResizingWas = true
-        }
-        if (root.dragging)
-          Quickshell.execDetached(["hyprctl", "eval", "hl.config({ animations = { enabled = false }, dwindle = { smart_resizing = false } })"])
-      }
+  HyprlandBridge {
+    id: bridge
+    onLayoutRead: (clients, workspaceId) => {
+      // Don't rebuild the handles while one is being dragged.
+      if (root.dragging) return
+      const next = EdgeGeometry.computeEdges(clients, workspaceId)
+      if (JSON.stringify(next) !== JSON.stringify(root.edges)) root.edges = next
+      root.settlingWin = null
     }
   }
 
   Timer {
-    interval: 1000
+    interval: root.pollIntervalMs
     running: true
     repeat: true
     triggeredOnStart: true
@@ -88,12 +63,11 @@ Item {
 
   Connections {
     target: Hyprland
-    function onRawEvent(event) { debounce.restart() }
+    function onRawEvent(event) { eventDebounce.restart() }
   }
-  Timer { id: debounce; interval: 60; onTriggered: root.refresh() }
-  Timer { id: settle; interval: 150; onTriggered: root.refresh() }
-  // Never leave a released handle hanging if the layout read fails.
-  Timer { id: settleGuard; interval: 800; onTriggered: root.settlingWin = null }
+  Timer { id: eventDebounce; interval: root.eventDebounceMs; onTriggered: root.refresh() }
+  Timer { id: postDragRefresh; interval: root.postDragRefreshMs; onTriggered: root.refresh() }
+  Timer { id: settleTimeout; interval: root.settleTimeoutMs; onTriggered: root.settlingWin = null }
 
   Variants {
     model: root.edges
@@ -157,6 +131,8 @@ Item {
             root.beginDrag()
           }
           onReleased: root.endDrag(win)
+          // A lost grab never sends onReleased; without this the drag would never end.
+          onCanceled: root.endDrag(win)
           onPositionChanged: (m) => {
             if (!pressed) {
               win.crossPos = win.vertical ? hit.y + m.y : hit.x + m.x
@@ -188,7 +164,7 @@ Item {
           // the two windows we resize.
           var x = win.vertical ? delta : 0
           var y = win.vertical ? 0 : delta
-          Hyprland.dispatch("hl.dsp.window.resize({ x = " + x + ", y = " + y + ", relative = true, window = \"address:" + m.t + "\" })")
+          bridge.resizeWindow(m.t, x, y)
         }
       }
 
