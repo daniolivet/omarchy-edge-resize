@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "wrdark.edge-resize",
+  "name": "Edge resize",
+  "version": "1.0.0",
+  "author": "wrdark",
+  "description": "Hover the gap between two tiled windows to get a handle you can drag to resize them.",
+  "kinds": ["panel"],
+  "keepLoaded": true,
+  "entryPoints": { "panel": "Edges.qml" }
+}
