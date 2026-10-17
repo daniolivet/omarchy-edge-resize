@@ -48,4 +48,15 @@ const edges = context.findEdges(twoSideBySide.clients, twoSideBySide.workspaceId
 assert.ok(context.edgesEqual(edges, context.findEdges(twoSideBySide.clients, twoSideBySide.workspaceId)))
 assert.ok(!context.edgesEqual(edges, []))
 
+assert.ok(edges.every(edge => !edge.leftOrTopWindow.startsWith("0x") && !edge.resizeTarget.startsWith("0x")))
+assert.strictEqual(context.bareAddress("0x614652b53a30"), "614652b53a30")
+assert.strictEqual(context.bareAddress("614652b53a30"), "614652b53a30")
+
+const edge = { total: 1000, minSize: 250 }
+assert.strictEqual(context.clampSize(edge, 600), 600)
+assert.strictEqual(context.clampSize(edge, 100), 250)
+assert.strictEqual(context.clampSize(edge, 900), 750)
+assert.strictEqual(context.sharePercent(edge, 333), 33)
+assert.strictEqual(context.sharePercent(edge, 750), 75)
+
 console.log("EdgeGeometry tests passed")

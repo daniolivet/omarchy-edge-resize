@@ -1,16 +1,15 @@
 [
   {
     "vertical": true,
-    "a": "0x614652b53a30",
-    "t": "0x614652b53a30",
-    "ax": 12,
-    "ay": 12,
-    "aw": 734,
-    "ah": 1248,
-    "bsize": 1532,
-    "cx": 753,
-    "cy": 636,
-    "len": 1248,
-    "gap": 14
+    "leftOrTopWindow": "614652b53a30",
+    "resizeTarget": "614652b53a30",
+    "start": 12,
+    "size": 734,
+    "total": 2266,
+    "minSize": 566.5,
+    "gapSize": 14,
+    "center": 753,
+    "crossCenter": 636,
+    "length": 1248
   }
 ]

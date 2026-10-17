@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
+import "../lib/EdgeGeometry.js" as EdgeGeometry
 
 // Everything that talks to Hyprland: reading the tiled layout, turning off the
 // options that get in the way of a live drag, and dispatching the resizes.
@@ -39,8 +40,20 @@ Scope {
     setDragOptions(animationsWere, smartResizingWas)
   }
 
+  // Addresses are bare, without "0x", as EdgeGeometry keeps them.
   function resizeWindow(address, dx, dy) {
-    Hyprland.dispatch(`hl.dsp.window.resize({ x = ${dx}, y = ${dy}, relative = true, window = "address:${address}" })`)
+    Hyprland.dispatch(`hl.dsp.window.resize({ x = ${dx}, y = ${dy}, relative = true, window = "address:0x${address}" })`)
+  }
+
+  // The size Hyprland last reported for a window, as [width, height], or null.
+  // It comes from Quickshell's cache: call refreshWindows() to keep it fresh.
+  function windowSize(address) {
+    const toplevel = Hyprland.toplevels.values.find(t => EdgeGeometry.bareAddress(t.address) === address)
+    return toplevel?.lastIpcObject?.size ?? null
+  }
+
+  function refreshWindows() {
+    Hyprland.refreshToplevels()
   }
 
   function setDragOptions(animations, smartResizing) {
