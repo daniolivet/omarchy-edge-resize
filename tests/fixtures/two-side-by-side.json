@@ -1,0 +1,59 @@
+{
+  "workspaceId": 1,
+  "clients": [
+    {
+      "address": "0x614652cbc140",
+      "at": [
+        760,
+        12
+      ],
+      "size": [
+        1532,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 1
+      }
+    },
+    {
+      "address": "0x614652b53a30",
+      "at": [
+        12,
+        12
+      ],
+      "size": [
+        734,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 1
+      }
+    },
+    {
+      "address": "0x614653ba74c0",
+      "at": [
+        12,
+        12
+      ],
+      "size": [
+        2280,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 2
+      }
+    }
+  ]
+}

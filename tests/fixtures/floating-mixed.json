@@ -1,0 +1,113 @@
+{
+  "workspaceId": 3,
+  "clients": [
+    {
+      "address": "0x614653ba74c0",
+      "at": [
+        12,
+        12
+      ],
+      "size": [
+        2280,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 2
+      }
+    },
+    {
+      "address": "0x614652cbc140",
+      "at": [
+        1182,
+        12
+      ],
+      "size": [
+        1110,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 1
+      }
+    },
+    {
+      "address": "0x614652b53a30",
+      "at": [
+        12,
+        12
+      ],
+      "size": [
+        1156,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 1
+      }
+    },
+    {
+      "address": "0x614653b27aa0",
+      "at": [
+        12,
+        12
+      ],
+      "size": [
+        1133,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 3
+      }
+    },
+    {
+      "address": "0x614653caa3f0",
+      "at": [
+        864,
+        5
+      ],
+      "size": [
+        1152,
+        1262
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": true,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 3
+      }
+    },
+    {
+      "address": "0x614653deaf20",
+      "at": [
+        1159,
+        12
+      ],
+      "size": [
+        1133,
+        1248
+      ],
+      "mapped": true,
+      "hidden": false,
+      "floating": false,
+      "fullscreen": 0,
+      "workspace": {
+        "id": 3
+      }
+    }
+  ]
+}
